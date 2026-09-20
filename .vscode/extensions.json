@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "jetbrains.kotlin-server",
+    "ombratteng.ktfmt-kotlin-formatter"
+  ]
+}

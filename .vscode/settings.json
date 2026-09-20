@@ -1,0 +1,15 @@
+{
+  "[kotlin]": {
+    "editor.defaultFormatter": "ombratteng.ktfmt-kotlin-formatter",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "[kotlin-script]": {
+    "editor.defaultFormatter": "ombratteng.ktfmt-kotlin-formatter",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "ktfmt.style": "kotlinlang"
+}
