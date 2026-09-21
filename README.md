@@ -4,6 +4,10 @@ I built Local Table for my Android technical assessment. It's a Kotlin and Jetpa
 
 This is my own assessment project. It's not an official Mr D or OfferZen app.
 
+## Demo recording
+
+[Watch or download the app demo recording](docs/Recording.mp4).
+
 ## Screenshots
 
 These captures are from the initial build; some screen labels have since been simplified.
@@ -130,7 +134,7 @@ The implementation run on 20 September 2026 passed 10 unit tests and 5 emulator 
 
 I used Codex to help with the implementation, test code, sample data and documentation. [AI_USAGE.md](AI_USAGE.md) contains my prompts rewritten for this project and explains that they aren't an exact chat transcript.
 
-Paging, server-side search, separate feature modules and performance benchmarks are future work. The current data source is a local mock. The narrated assessment video still needs recording.
+Paging, server-side search, separate feature modules and performance benchmarks are future work. The current data source is a local mock.
 
 ## Author
 
