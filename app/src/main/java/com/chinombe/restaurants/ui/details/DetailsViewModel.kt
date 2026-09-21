@@ -11,6 +11,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -26,13 +27,13 @@ class DetailsViewModel
 constructor(private val repository: RestaurantRepository, savedState: SavedStateHandle) :
     ViewModel() {
     private val error = MutableStateFlow<String?>(null)
-    // TODO: Handle a missing route ID explicitly instead of relying on checkNotNull.
+    private val restaurantId = savedState.get<String>("restaurantId")
+    private val restaurant =
+        restaurantId?.takeIf { it.isNotBlank() }?.let(repository::observeRestaurant) ?: flowOf(null)
     val state =
-        combine(repository.observeRestaurant(checkNotNull(savedState["restaurantId"])), error) {
-                restaurant,
-                error ->
-                DetailsUiState(restaurant, false, error)
-            }
+        combine(restaurant, error) { restaurant, error ->
+            DetailsUiState(restaurant, false, error)
+        }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DetailsUiState())
 
     fun setFavorite(restaurant: Restaurant) {

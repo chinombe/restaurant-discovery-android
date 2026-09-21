@@ -14,14 +14,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class RepositoryTest {
-    // TODO: Check that duplicate IDs leave the old cache untouched.
-
     @Test
     fun cacheAndFavoritesSurviveRefreshFailureAndDatabaseReopen() = runTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
@@ -47,6 +44,15 @@ class RepositoryTest {
             fail = true
             assertTrue(repository.refreshRestaurants().isFailure)
             assertEquals("Updated", repository.observeRestaurants().first().single().name)
+            fail = false
+            rows =
+                listOf(
+                    RestaurantDto("one", "Duplicate"),
+                    RestaurantDto(" one ", "Duplicate normalized ID"),
+                )
+            assertTrue(repository.refreshRestaurants().isFailure)
+            assertEquals("Updated", repository.observeRestaurants().first().single().name)
+            assertTrue(repository.observeRestaurant("one").first()!!.isFavorite)
             database.close()
             database = Room.databaseBuilder(context, AppDatabase::class.java, name).build()
             repository = OfflineFirstRestaurantRepository(api, database.restaurantDao())

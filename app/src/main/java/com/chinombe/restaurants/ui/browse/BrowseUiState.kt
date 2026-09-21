@@ -38,7 +38,7 @@ fun browseState(
     val errorMessage =
         when {
             !failed -> null
-            hasCache -> "You’re offline. Showing saved restaurants."
+            hasCache -> "Couldn’t refresh. Showing saved restaurants."
             else -> "Couldn’t load restaurants. Please try again."
         }
 

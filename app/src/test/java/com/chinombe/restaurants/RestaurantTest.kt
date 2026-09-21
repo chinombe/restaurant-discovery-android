@@ -78,7 +78,7 @@ class RestaurantTest {
         val state = browseState(items, "unmatched", false, false, true)
         assertTrue(state.hasCache)
         assertTrue(state.restaurants.isEmpty())
-        assertEquals("You’re offline. Showing saved restaurants.", state.errorMessage)
+        assertEquals("Couldn’t refresh. Showing saved restaurants.", state.errorMessage)
     }
 
     @Test

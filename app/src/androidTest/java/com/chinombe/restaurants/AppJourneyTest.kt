@@ -41,7 +41,7 @@ class AppJourneyTest {
             compose.onNodeWithText("Refresh").performClick()
             compose.waitUntil(10_000) {
                 compose
-                    .onAllNodesWithText("You’re offline. Showing saved restaurants.")
+                    .onAllNodesWithText("Couldn’t refresh. Showing saved restaurants.")
                     .fetchSemanticsNodes()
                     .isNotEmpty()
             }
@@ -49,7 +49,7 @@ class AppJourneyTest {
             compose.onNodeWithText("Retry").performScrollTo().performClick()
             compose.waitUntil(10_000) {
                 compose
-                    .onAllNodesWithText("You’re offline. Showing saved restaurants.")
+                    .onAllNodesWithText("Couldn’t refresh. Showing saved restaurants.")
                     .fetchSemanticsNodes()
                     .isEmpty()
             }
