@@ -24,7 +24,9 @@ I used one Gradle app module with separate `data`, `domain`, `ui`, `navigation` 
 
 ## Why I used a JSON asset
 
-The assignment allows a local mock source, so I used `restaurants.json` with 200 fictional restaurant branches around Johannesburg. There is no backend to start or API key to provide.
+I used `restaurants.json` with 200 fictional restaurant branches around Johannesburg. There is no backend to start or API key to provide.
+
+The brief explicitly permits local assets as the JSON source and as an offline baseline. Room adds a persistent cache and lets the app demonstrate a failed refresh without losing the last successful list.
 
 `MockRestaurantApi` reads the file through the `RestaurantApi` interface. It parses the JSON on `Dispatchers.IO` and adds a 900 ms delay so loading is visible during the demo.
 
@@ -50,7 +52,7 @@ A mutex prevents repository refreshes from running at the same time. Browse also
 | Refresh with saved data | Existing content stays visible |
 | Successful refresh | Updated restaurants from Room |
 | Search or filter has no matches | Empty results with Clear filters |
-| Failed refresh with saved data | Offline message and Retry, with cached content still available |
+| Failed refresh with saved data | Refresh-failure message and Retry, with cached content still available |
 | Failed refresh without saved data | Full error message with Retry |
 
 `hasCache` comes from the full database list. This matters when a search has no matches: the app still has cached restaurants, even if the current filter hides them.
@@ -64,6 +66,8 @@ I separated them because refreshing restaurant information shouldn't change what
 When someone changes a favorite, the repository updates its table and Room emits the new state. Browse and Details both observe those changes, so there's no extra code copying favorite state between screens.
 
 Favorite IDs remain saved if a restaurant disappears from a later response. If that restaurant returns with the same ID, its favorite state is still there.
+
+Persistent favorites are my selected improvement for Task 3. The measurable behavior is that a saved favorite survives a refresh and a database close/reopen; the Room test verifies both. A full app restart is also part of the manual walkthrough below.
 
 To check this behavior, save a restaurant on Browse, open Details, change it there and go back. Then save it again, restart the app and refresh the list. The favorite should remain saved.
 
@@ -96,7 +100,7 @@ Compose collects state using `collectAsStateWithLifecycle()`. Loading happens th
 
 Navigation passes an encoded restaurant ID through `restaurant/{restaurantId}`. Details observes that ID in Room, so it shows current data instead of a serialized copy from Browse. Back navigation uses `popBackStack()`.
 
-If the ID has no matching record, Details shows “Restaurant unavailable”. The route argument itself is required: the ViewModel uses `checkNotNull`, so constructing it without the argument would fail. That is different from a valid route pointing to an unknown restaurant.
+If the ID is missing, blank or has no matching record, Details shows “Restaurant unavailable”. Navigation normally supplies the ID; the ViewModel also handles an absent argument without crashing.
 
 ## The failure switch
 
@@ -114,8 +118,6 @@ I used Hilt to provide Room, the DAO, the API, the repository, demo controls and
 
 The repository interface and `DemoControls` let tests use fakes. Injecting the dispatcher lets coroutine tests control when the filtering work runs.
 
-Manual constructor injection remains a fallback if Hilt setup becomes a problem. It would need application-level dependency construction and ViewModel factories that preserve `SavedStateHandle`. That alternative is kept in [AI_USAGE.md](AI_USAGE.md); the app currently uses Hilt.
-
 ## Tests
 
 The tests focus on cache preservation, favorites and the main screen flows.
@@ -126,7 +128,7 @@ The Room test checks that refresh saves data, failed or malformed refreshes pres
 
 The Compose tests check empty results, Retry, favorite callbacks and the ID used for navigation. The full app test uses the real Activity, Hilt, Room and navigation to load restaurants, change favorites, open Details, simulate failure, recover and search for a missing name. It waits for database-driven favorite updates before checking the UI.
 
-The implementation run on 20 September 2026 passed 10 unit tests and 5 emulator tests on API 35, along with debug and release builds. Lint passed with no errors and 18 warnings. Those are results from that run, not a claim that every later edit has been tested. The commands are in the README.
+The review run on 21 September 2026 passed 11 unit tests and 5 emulator tests on API 35, along with debug, unsigned release and Android test APK builds. Lint reported no errors and 18 warnings. The checks include missing, blank and unknown Details IDs, and cache and favorite preservation after duplicate normalized IDs. The commands are in the README.
 
 ## Trade-offs
 
@@ -161,10 +163,16 @@ If multiple teams were working on this feature, the current packages could move 
 
 The feature API would expose navigation entry points, data would own the sources and repository, and UI would own screens and state. I'd add domain use cases where they simplify real behavior. Shared modules would contain things several features actually use. This is a possible next step, not the current module structure.
 
+The app module would assemble navigation; feature APIs would expose destinations taking stable IDs. Each feature would own its ViewModels and UI state, while repository interfaces would keep screens independent of network and database implementations. Shared UI components would live in the design system rather than depending on a feature's ViewModel.
+
+For a larger app, I'd keep fast unit tests for mapping and state, database integration tests for transactions and persistence, and a small set of end-to-end tests for critical journeys. A real HTTP source would need contract and failure tests for timeouts, malformed responses and pagination. Scrolling benchmarks on representative devices would guide performance changes.
+
 ## AI help and the demo
 
 I used Codex to help build the app, generate the fictional dataset, write tests and update the documentation. [AI_USAGE.md](AI_USAGE.md) contains project-specific versions of my supplied prompts. They're labeled as edited prompts, not an exact record of every conversation.
 
+For ongoing development, I would use AI for bounded tasks such as drafting test cases, generating mock data and proposing small changes against an explicit requirement. Each change would need code review and checks against expected behavior before acceptance. Tests should cover observable outcomes and failure cases, rather than simply repeat the generated implementation. AI-written explanations and test-result claims also need checking against the code and actual reports. The dated verification results above record the checks run for this version; edited prompts alone are not verification.
+
 For the demo, I'd show loading, search, Open now, empty results, Details and favorites first. Then I'd restart the app, demonstrate a failed refresh with cached data, recover with Retry and show the uncached error. After that I'd walk through the ViewModel, repository and Room transaction, show the test results and explain the trade-offs above.
 
-Screenshots are included in the README. The narrated video still needs recording.
+Screenshots and the [demo recording](docs/Recording.mp4) are included in the README. The recording predates the wording and route-validation changes from this review.

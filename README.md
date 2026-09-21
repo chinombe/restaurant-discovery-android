@@ -6,7 +6,9 @@ This is my own assessment project. It's not an official Mr D or OfferZen app.
 
 ## Demo recording
 
-[Watch or download the app demo recording](docs/Recording.mp4).
+[Watch or download the app demo recording](docs/Recording.mp4). The recording predates the latest refresh-message and route-validation changes.
+
+The video is stored with Git LFS. To download it in a clone, install Git LFS, then run `git lfs install` and `git lfs pull`.
 
 ## Screenshots
 
@@ -58,7 +60,7 @@ To try a failed refresh with saved data:
 1. Open the app and let the restaurants load.
 2. Save a favorite and check it on Details.
 3. Turn on **Simulate failure** and press **Refresh**.
-4. The list should stay visible with “You’re offline. Showing saved restaurants.”
+4. The list should stay visible with “Couldn’t refresh. Showing saved restaurants.”
 5. Turn the switch off and press **Retry**.
 
 To try a failure with no saved restaurants, turn on the switch, then run these commands against a debug installation:
@@ -128,7 +130,7 @@ To build the unsigned release APK:
 
 The tests focus on search and filtering, missing data, formatting, ViewModel states, cancellation, cache preservation and favorites. The Android tests also check Room data after reopening the database, Compose interactions and the full Browse-to-Details flow with simulated failure and recovery.
 
-The implementation run on 20 September 2026 passed 10 unit tests and 5 emulator tests on API 35. Debug and release builds passed. Lint reported 0 errors and 18 warnings: 17 dependency-update notices and one base adaptive-icon monochrome notice. An Android 13+ monochrome icon is included. Those results apply to that run; rerun the checks after changing the code.
+The review run on 21 September 2026 passed 11 unit tests and 5 emulator tests on API 35. Debug, unsigned release and Android test APK builds passed. Lint reported 0 errors and 18 warnings: 17 dependency-update notices and one base adaptive-icon monochrome notice. An Android 13+ monochrome icon is included. Rerun the checks after changing the code.
 
 ## AI use and remaining work
 

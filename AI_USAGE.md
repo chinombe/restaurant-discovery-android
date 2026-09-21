@@ -2,7 +2,9 @@
 
 Tool used: OpenAI Codex.
 
-# Prompts
+Codex helped with implementation, the fictional dataset, tests and documentation. The prompts below are edited, project-specific examples. They are not a verbatim conversation log or evidence that every requested check was completed. Current behavior and verification results are documented in [README.md](README.md) and [SOLUTION.md](SOLUTION.md).
+
+## Edited prompt examples
 
 ## 1. Models and JSON
 
@@ -30,7 +32,7 @@ Also check that both screens update when a favorite changes. Explain what happen
 
 ## 3. Mock API
 
-The assessment allows a local JSON file so I don't need a real backend. Keep `RestaurantApi` and `MockRestaurantApi` and read the restaurants from assets.
+This version uses a local JSON file and does not need a backend. Keep `RestaurantApi` and `MockRestaurantApi` and read the restaurants from assets.
 
 Parse the file off the main thread using Kotlin serialization. Keep the 900 ms delay so I can show loading. The ViewModels should call the repository, not read the file themselves.
 
@@ -92,7 +94,7 @@ The routes are `browse` and `restaurant/{restaurantId}`. Only pass the id, not t
 
 Keep `hiltViewModel()`, lifecycle-aware state collection and Back navigation. Check that tapping a restaurant doesn't open duplicate Details screens.
 
-If the id has no matching restaurant, show “Restaurant unavailable”. Also check the `checkNotNull` in `DetailsViewModel`: the route normally supplies the id, but creating the ViewModel without it would fail. Don't say that case is handled if it isn't. Show me a small fix if needed.
+If the id has no matching restaurant, show “Restaurant unavailable”. Check that a missing or blank route id shows the unavailable state without crashing the ViewModel.
 
 ## 8. Hilt setup
 
@@ -152,10 +154,8 @@ Run the build and checks where possible:
 ./gradlew connectedDebugAndroidTest
 ```
 
-The earlier run passed 10 unit tests and 5 emulator tests. Check the current code rather than assuming those results still apply. The screenshots are included. The narrated video still needs recording.
+The earlier run passed 10 unit tests and 5 emulator tests. Check the current code rather than assuming those results still apply. The screenshots and demo recording are linked in the README.
 
-## Recording what I used
+## Verification
 
-When I use one of these prompts, I'll keep the exact prompt, note what I accepted or changed, and record the checks I actually ran.
-
-This edit only changes the wording of the prompts. It doesn't mean they were all run again or that the app was retested.
+These edited examples describe requested work. Refer to the dated results in the README for checks actually run.
